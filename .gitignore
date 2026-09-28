@@ -1,0 +1,20 @@
+## .NET build output
+**/bin/
+**/obj/
+
+## Visual Studio and VS Code user files
+.vs/
+*.user
+*.suo
+
+## Local environment and secrets
+appsettings.json
+*.local.json
+appsettings.Development.json
+appsettings.*.Development.json
+!.config/appsettings.example.json
+
+## Test and coverage output
+TestResults/
+coverage/
+*.trx
