@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Oficina.Application.Interfaces;
+using Oficina.Application.services; // Certifique-se de que a capitalização corresponde à da pasta (services ou Services)
 using Oficina.Application.Services;
 using Oficina.Infrastructure.Services;
 using Oficina.Persistence.Context;
@@ -36,12 +37,25 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IVeiculoRepository, VeiculoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<ICategoriaProdutoRepository, CategoriaProdutoRepository>();
+builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
+builder.Services.AddScoped<IServicoRepository, ServicoRepository>();
+builder.Services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
+builder.Services.AddScoped<IOrdemServicoRepository, OrdemServicoRepository>();
 // Services
 builder.Services.AddScoped<ClienteService>();
 builder.Services.AddScoped<VeiculoService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<ProdutoService>(); 
+builder.Services.AddScoped<CategoriaProdutoService>();
+builder.Services.AddScoped<FornecedorService>();
+builder.Services.AddScoped<ServicoService>();
+builder.Services.AddScoped<FuncionarioService>();
+builder.Services.AddScoped<OrdemServicoService>();
+builder.Services.AddScoped<RelatorioService>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

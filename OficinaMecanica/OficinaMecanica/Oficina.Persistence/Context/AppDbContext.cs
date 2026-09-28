@@ -25,6 +25,8 @@ public class AppDbContext : DbContext
     public DbSet<CategoriaProduto> CategoriasProduto => Set<CategoriaProduto>();
     public DbSet<Fornecedor> Fornecedores => Set<Fornecedor>();
     public DbSet<ProdutoFornecedor> ProdutoFornecedores => Set<ProdutoFornecedor>();
+    public DbSet<OrdemServico> OrdensServico => Set<OrdemServico>();
+    public DbSet<OrdemServicoItem> OrdemServicoItens { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
