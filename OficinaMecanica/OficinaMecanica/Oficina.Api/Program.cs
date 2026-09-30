@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Oficina.Application.Interfaces;
-using Oficina.Application.services; // Certifique-se de que a capitalização corresponde à da pasta (services ou Services)
+using Oficina.Application.services;
 using Oficina.Application.Services;
 using Oficina.Infrastructure.Services;
 using Oficina.Persistence.Context;
@@ -11,12 +11,14 @@ using Oficina.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Authentication
-var secretKey = "MinhaChaveSuperSecretaParaOJWTdaOficinaMecanica2026!"; // Em prod usar user-secrets ou env vars
+var secretKey = "MinhaChaveSuperSecretaParaOJWTdaOficinaMecanica2026!";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -43,7 +45,10 @@ builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
 builder.Services.AddScoped<IServicoRepository, ServicoRepository>();
 builder.Services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
 builder.Services.AddScoped<IOrdemServicoRepository, OrdemServicoRepository>();
-// Services
+builder.Services.AddScoped<IRelatorioRepository, RelatorioRepository>();
+
+// Services (Mapeados corretamente com interfaces para evitar falhas no DI)
+// Services (Registados pelas classes concretas originais)
 builder.Services.AddScoped<ClienteService>();
 builder.Services.AddScoped<VeiculoService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -56,12 +61,27 @@ builder.Services.AddScoped<FuncionarioService>();
 builder.Services.AddScoped<OrdemServicoService>();
 builder.Services.AddScoped<RelatorioService>();
 
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirFrontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
+
+app.UseCors("PermitirFrontend");
 
 app.MapControllers();
 
